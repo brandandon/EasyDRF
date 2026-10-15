@@ -1,0 +1,52 @@
+name: Build net installer
+
+on:
+  push:
+    branches: [master]
+    paths: ["installer/**", "Release/**", ".github/workflows/build-installer.yml"]
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Find or install Inno Setup
+        shell: pwsh
+        run: |
+          $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
+          if (-not (Test-Path $iscc)) {
+            choco install innosetup -y --no-progress
+          }
+          if (-not (Test-Path $iscc)) { throw "Inno Setup not found" }
+          "ISCC=$iscc" | Out-File -FilePath $env:GITHUB_ENV -Append
+
+      - name: Record the EasyDRF.exe fingerprint
+        shell: pwsh
+        run: Get-FileHash Release\EasyDRF.exe -Algorithm SHA256 | Format-List
+
+      - name: Build installer
+        shell: pwsh
+        working-directory: installer
+        run: |
+          $version = (Get-Content VERSION -Raw).Trim()
+          & $env:ISCC "/DMyAppVersion=$version" EasyDRF-Net.iss
+          if ($LASTEXITCODE -ne 0) { throw "ISCC failed" }
+          Get-FileHash output\*.exe -Algorithm SHA256 | Format-List
+
+      - name: Upload installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: EasyDRF-Net-Setup
+          path: installer/output/*.exe
+
+      - name: Publish release (version tags only)
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: installer/output/*.exe
