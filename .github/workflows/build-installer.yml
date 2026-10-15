@@ -35,13 +35,13 @@ jobs:
         working-directory: installer
         run: |
           $version = (Get-Content VERSION -Raw).Trim()
-          $out = & $env:ISCC "/DMyAppVersion=$version" EasyDRF-Net.iss 2>&1
+          cmd /c "`"$env:ISCC`" /DMyAppVersion=$version EasyDRF-Net.iss > iscc.log 2>&1"
           $code = $LASTEXITCODE
-          $out | ForEach-Object { "$_" }
+          Get-Content iscc.log
           if ($code -ne 0) {
             # Surface compiler messages as annotations so they show in the run summary
-            $out | Select-Object -Last 15 | ForEach-Object { "::error::ISCC: $_" }
-            throw "ISCC failed"
+            Get-Content iscc.log | Where-Object { $_ -match 'error|line \d+:|failed' } | Select-Object -Last 8 | ForEach-Object { "::error::ISCC: $_" }
+            throw "ISCC failed with exit code $code"
           }
           Get-FileHash output\*.exe -Algorithm SHA256 | Format-List
 
