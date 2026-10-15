@@ -476,3 +476,6 @@ old/
 /Release/vc143.idb
 /Release/EasyDRF-Feb15-2023.exe
 /Release/EasyDRF-Jul09-2023.exe
+
+# Net installer files
+!installer/*.txt

@@ -1,0 +1,28 @@
+EasyDRF - SSTV Net installer
+===========================
+
+This installer sets up EasyDRF, a free HamDRM digital image program for
+sending and receiving pictures over amateur radio.
+
+EasyDRF was written by Daz Man, based on WinDRM by HB9TLK and the Dream
+DRM software. This package installs Daz's official EasyDRF.exe, unchanged.
+It is NOT an official EasyDRF release: the only additions are this
+installer and preset settings for our SSTV net.
+
+What the installer does:
+  - Installs EasyDRF for your Windows user account (no admin needed)
+  - Asks for your callsign and loads the net's standard settings
+  - Adds Start menu and desktop shortcuts
+  - Adds an "EasyDRF Received Images" shortcut to your received pictures
+
+After installing, open EasyDRF and pick your radio's sound card under the
+Soundcard menu (receive input and transmit output), and your PTT port under
+Setup. The net's setup guide shows the settings for each radio.
+
+Uninstalling removes the program but keeps your received pictures and your
+settings.
+
+License: GNU General Public License v3 (included as "LICENSE (GPL v3).txt").
+Source code:
+  EasyDRF:       https://github.com/DazDSP/EasyDRF
+  This package:  https://github.com/brandandon/easydrf
