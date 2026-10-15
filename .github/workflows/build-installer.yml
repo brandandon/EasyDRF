@@ -35,8 +35,14 @@ jobs:
         working-directory: installer
         run: |
           $version = (Get-Content VERSION -Raw).Trim()
-          & $env:ISCC "/DMyAppVersion=$version" EasyDRF-Net.iss
-          if ($LASTEXITCODE -ne 0) { throw "ISCC failed" }
+          $out = & $env:ISCC "/DMyAppVersion=$version" EasyDRF-Net.iss 2>&1
+          $code = $LASTEXITCODE
+          $out | ForEach-Object { "$_" }
+          if ($code -ne 0) {
+            # Surface compiler messages as annotations so they show in the run summary
+            $out | Select-Object -Last 15 | ForEach-Object { "::error::ISCC: $_" }
+            throw "ISCC failed"
+          }
           Get-FileHash output\*.exe -Algorithm SHA256 | Format-List
 
       - name: Upload installer

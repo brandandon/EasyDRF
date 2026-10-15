@@ -37,7 +37,7 @@ PrivilegesRequired=lowest
 DefaultDirName={autopf}\EasyDRF
 DisableProgramGroupPage=yes
 DisableDirPage=yes
-LicenseFile=..\GNU General Public License v3.0 - GNU Project - Free Software Foundation (FSF).html
+LicenseFile=LICENSE-GPL3.txt
 InfoBeforeFile=NOTICE.txt
 OutputDir=output
 OutputBaseFilename=EasyDRF-Net-Setup-{#MyAppVersion}
@@ -59,7 +59,7 @@ Name: "{app}\Rx Files"; Flags: uninsneveruninstall
 
 [Files]
 Source: "..\Release\EasyDRF.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\GNU General Public License v3.0 - GNU Project - Free Software Foundation (FSF).html"; DestDir: "{app}"; DestName: "LICENSE (GPL v3).html"
+Source: "LICENSE-GPL3.txt"; DestDir: "{app}"; DestName: "LICENSE (GPL v3).txt"
 Source: "NOTICE.txt"; DestDir: "{app}"
 
 [Icons]
@@ -114,30 +114,30 @@ end;
 
 function NextButtonClick(CurPageID: Integer): Boolean;
 var
-  Call: String;
+  CallSign: String;
 begin
   Result := True;
   if CurPageID = CallPage.ID then
   begin
-    Call := CleanCall(CallPage.Values[0]);
-    if (Length(Call) < 3) or (Length(Call) > 12) then
+    CallSign := CleanCall(CallPage.Values[0]);
+    if (Length(CallSign) < 3) or (Length(CallSign) > 12) then
     begin
       MsgBox('Please enter a valid callsign (3 to 12 letters and numbers).', mbError, MB_OK);
       Result := False;
     end
     else
-      CallPage.Values[0] := Call;
+      CallPage.Values[0] := CallSign;
   end;
 end;
 
 { Write the SSTV net preset. Line order matters: EasyDRF reads settings.txt by position. }
-procedure WriteNetPreset(Call: String);
+procedure WriteNetPreset(CallSign: String);
 var
   Lines: TArrayOfString;
 begin
   SetArrayLength(Lines, 19);
   Lines[0]  := '0 TX_Port';
-  Lines[1]  := Call + ' Call';
+  Lines[1]  := CallSign + ' Call';
   Lines[2]  := '0 TX_Sound_OUT_Device';
   Lines[3]  := '0 TX_Sound_IN_Device';
   Lines[4]  := '0 RX_Sound_OUT_Device';
